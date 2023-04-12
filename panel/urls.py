@@ -5,6 +5,7 @@ from . import views
 
 urlpatterns = [
     path('test_favicon', views.home_view, name="homeFavicon"),
+    path('index_noautenticado', views.index_noautenticado, name="index_noautenticado"),
     path('', views.autenticacion, name="autenticacion"),
     path('signout', views.signout, name="signout"),
     path('home', views.index, name="index"),

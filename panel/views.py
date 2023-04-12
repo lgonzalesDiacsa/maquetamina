@@ -22,6 +22,10 @@ TEMPLATE_DIRS = (
 def home_view(request: HttpRequest) -> HttpResponse:
     return render(request, 'home.html')
 
+def index_noautenticado(request):
+    
+    return render(request, "index.html")
+
 def autenticacion(request):
     if request.method == 'GET':
         return render(request, "login.html",{
@@ -46,6 +50,7 @@ def signout(request):
 
 @login_required(login_url = 'autenticacion')
 def index(request):
+    print("Ingreso a intentar leer el livedata")
     users = models.LiveData.objects.all()
     data = {'total': users.count()}
     return render(request, "index.html", data)
