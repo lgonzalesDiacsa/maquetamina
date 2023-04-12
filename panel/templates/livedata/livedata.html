@@ -1,0 +1,95 @@
+{% extends '../index_master.html' %}
+
+{% block head %}
+<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.2.0/css/bootstrap.min.css"> -->
+<!-- <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css"> -->
+<!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css"> -->
+{% endblock%}
+
+{% block content %}
+<div class="right_col" role="main">
+    <h1>Lista de Personal al Interior de la Mina</h1>
+    <h2> Última actualizacion: {{fecha_y_hora|date:"j-m-Y H:i:s"}}</h2>
+    
+    <div class="toggle-container">
+      <label class="switchery-slider my-switchery">
+        <input type="checkbox" id="autorefresh-toggle">
+        <span class="slider round"></span>
+      </label>
+      <span class="toggle-text">Activar/Desactivar autorefresh</span>
+    </div>
+    
+
+    <div class="table-responsive">
+        <table id="DataLive" class="table table-striped table-hover table-secondary ">
+          <thead>
+            <tr>
+              <th scope="col" data-bs-column-filter>#</th>
+              <th scope="col" data-bs-column-filter>CardID</th>
+              <th scope="col" data-bs-column-filter>Nombre</th>
+              <th scope="col" data-bs-column-filter>Apellido</th>
+              <th scope="col" data-bs-column-filter>Cargo</th>
+              <th scope="col" data-bs-column-filter>Fecha de Ingreso</th>
+              <th scope="col" data-bs-column-filter>Hora de Ingreso</th>
+            </tr>
+          </thead>
+          <tbody>
+
+            {% for u in livedata %}
+                <tr>
+                <th scope="row">{{ u.id}}</th>
+                <td>{{ u.cardid}}</td>
+                <td>{{ u.nombre}}</td>
+                <td>{{ u.apellido}}</td>
+                <td>{{ u.cargo}}</td>
+                <td>{{ u.f_ingreso}}</td>
+                <td>{{ u.h_ingreso}}</td>
+                </tr>
+            {% endfor %}
+          </tbody>
+      
+        </table>
+    </div>
+      {% if perms.panel.change_livedata %}
+        <a href="livedata/agregar" class="btn btn-primary">Ingresar livedata</a>
+        <a href="livedata/eliminar" class="btn btn-danger">Eliminar livedata</a>
+      {% endif %}
+  </div>
+  {% endblock%}
+
+  {% block scripts %}
+  
+<script>
+ 
+  var autorefreshEnabled = localStorage.getItem('autorefreshEnabled') === 'true';
+  var intervalId = null;
+
+  function toggleAutorefresh() {
+    autorefreshEnabled = !autorefreshEnabled;
+    localStorage.setItem('autorefreshEnabled', autorefreshEnabled);
+    //console.log("Función toggleAutorefresh() ejecutada.");
+    if (autorefreshEnabled) {
+      intervalId = setInterval(function() {
+        // aquí va la lógica para actualizar la página en intervalos de 5 segundos
+        location.reload();
+      }, 5000);
+    } else {
+      clearInterval(intervalId);
+    }
+  }
+  setInterval(function() {
+  if (autorefreshEnabled) {
+    // aquí va la lógica para actualizar la página en intervalos de 5 segundos
+    location.reload();
+  }
+}, 5000);
+  
+  document.getElementById("autorefresh-toggle").checked = autorefreshEnabled;
+  document.getElementById("autorefresh-toggle").addEventListener("change", toggleAutorefresh);
+  
+</script>
+
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>   
+
+{% endblock %}
