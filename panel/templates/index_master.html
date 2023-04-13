@@ -43,7 +43,7 @@
         <div class="col-md-3 left_col">
           <div class="left_col scroll-view">
             <div class="navbar nav_title" style="border: 0;">
-              <a href="home" class="site_title"><i class="fa fa-connectdevelop"></i> <span>AESA -DIACSA Personal</span></a>
+              <a href="{% url 'index' %}" class="site_title"><i class="fa fa-connectdevelop"></i> <span>AESA -DIACSA Personal</span></a>
             </div>
 
             <div class="clearfix"></div>
@@ -55,23 +55,23 @@
               <div class="menu_section">
                 <h3>General</h3>
                 <ul class="nav side-menu">
-                  <li><a href="home"><i class="fa fa-home"></i> Resumen</a>
+                  <li><a href="{% url 'index' %}"><i class="fa fa-home"></i> Resumen</a>
                   </li>
                   <li><a><i class="fa fa-users"></i> Usuarios <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
-                      <li><a href="listar"><i class="fa fa-user"></i> Listar</a></li>
+                      <li><a href="{% url 'listar' %}"><i class="fa fa-user"></i> Listar</a></li>
                       {% if perms.panel.change_livedata %}
-                        <li><a href="agregar"><i class="fa fa-user-plus"></i> Agregar</a></li>
-                        <li><a href="actualizar"><i class="fa fa-edit"></i> Actualizar</a></li>
-                        <li><a href="eliminar"><i class="fa fa-user-times"></i> Eliminar</a></li>
+                        <li><a href="{% url 'agregar' %}"><i class="fa fa-user-plus"></i> Agregar</a></li>
+                        <li><a href="{% url 'actualizar' %}"><i class="fa fa-edit"></i> Actualizar</a></li>
+                        <li><a href="{% url 'eliminar' %}"><i class="fa fa-user-times"></i> Eliminar</a></li>
                       {% endif %}
                     </ul>
                   </li>
-                  <li><a href="livedata"><i class="fa fa-clock-o"></i> Personal Tiempo Real</a>
+                  <li><a href="{% url 'livedata' %}"><i class="fa fa-clock-o"></i> Personal Tiempo Real</a>
                   </li>
-                  <li><a href="marcacion"><i class="fa fa-list-alt"></i> Historial</a>
+                  <li><a href="{% url 'marcacion' %}"><i class="fa fa-list-alt"></i> Historial</a>
                   </li>
-                  <li><a href="noregistrados"><i class="fa fa-user-secret"></i> Personal No Registrado</a>
+                  <li><a href="{% url 'noregistrados' %}"><i class="fa fa-user-secret"></i> Personal No Registrado</a>
                   </li>
                 </ul>
               </div>
@@ -94,7 +94,7 @@
                       Usuario: {{user.username}}
                     </a>
                     <div class="dropdown-menu dropdown-usermenu pull-right" aria-labelledby="navbarDropdown">
-                      <a class="dropdown-item"  href="/signout"><i class="fa fa-sign-out pull-right"></i> Log Out</a>
+                      <a class="dropdown-item"  href="{% url 'signout' %}"><i class="fa fa-sign-out pull-right"></i> Log Out</a>
                     </div>
                   </li>
                 </ul>
