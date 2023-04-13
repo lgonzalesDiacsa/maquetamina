@@ -15,6 +15,7 @@ from django.http.response import HttpResponse
 from datetime import datetime
 #from django.utils import timezone
 from zoneinfo import ZoneInfo
+import pytz
 
 ##########################################
 def actualizarLiveDataNoRegistrado(dataJson):
@@ -44,10 +45,12 @@ def actualizarLiveDataNoRegistrado(dataJson):
             fecha_datetime = datetime.strptime(dataJson["f_evento"]+' '+dataJson["h_evento"],'%Y-%m-%d %H:%M:%S')
             print(fecha_datetime)
             #zona_horaria = timezone.get_current_timezone()
-            zona_horaria = ZoneInfo('America/Lima')
+            #zona_horaria = ZoneInfo('America/Lima')
+            zona_horaria = pytz.timezone('America/Lima')
             print(zona_horaria)
             #fecha_datetime_utc = fecha_datetime.replace(tzinfo=timezone.utc) 
-            fecha_y_hora_con_zona_horaria = fecha_datetime.astimezone(zona_horaria)
+            #fecha_y_hora_con_zona_horaria = fecha_datetime.astimezone(zona_horaria)
+            fecha_y_hora_con_zona_horaria = zona_horaria.localize(fecha_datetime)
             print(fecha_y_hora_con_zona_horaria)
             nuevoLiveData.f_ingreso = fecha_y_hora_con_zona_horaria.date()
             nuevoLiveData.h_ingreso = fecha_y_hora_con_zona_horaria.time()
@@ -109,10 +112,12 @@ def actualizarLiveData(dataJson):
             fecha_datetime = datetime.strptime(dataJson["f_evento"]+' '+dataJson["h_evento"],'%Y-%m-%d %H:%M:%S')
             print(fecha_datetime)
             #zona_horaria = timezone.get_current_timezone()
-            zona_horaria = ZoneInfo('America/Lima')
+            #zona_horaria = ZoneInfo('America/Lima')
+            zona_horaria = pytz.timezone('America/Lima')
             print(zona_horaria)
             #fecha_datetime_utc = fecha_datetime.replace(tzinfo=timezone.utc) 
-            fecha_y_hora_con_zona_horaria = fecha_datetime.astimezone(zona_horaria)
+            #fecha_y_hora_con_zona_horaria = fecha_datetime.astimezone(zona_horaria)
+            fecha_y_hora_con_zona_horaria = zona_horaria.localize(fecha_datetime)
             print(fecha_y_hora_con_zona_horaria)
             nuevoLiveData.f_ingreso = fecha_y_hora_con_zona_horaria.date()
             nuevoLiveData.h_ingreso = fecha_y_hora_con_zona_horaria.time()
@@ -158,8 +163,13 @@ def guardarMarcacionRegistrados(dataJson):
         nuevoMarcacion.apellido = datosUserHistorial.apellido
         nuevoMarcacion.cargo = datosUserHistorial.cargo
         fecha_datetime = datetime.strptime(dataJson["f_evento"]+' '+dataJson["h_evento"],'%Y-%m-%d %H:%M:%S')
-        zona_horaria = ZoneInfo('America/Lima')
-        fecha_y_hora_con_zona_horaria = fecha_datetime.astimezone(zona_horaria)
+        #zona_horaria = ZoneInfo('America/Lima')
+        zona_horaria = pytz.timezone('America/Lima')
+        print(zona_horaria)
+        #fecha_datetime_utc = fecha_datetime.replace(tzinfo=timezone.utc) 
+        #fecha_y_hora_con_zona_horaria = fecha_datetime.astimezone(zona_horaria)
+        fecha_y_hora_con_zona_horaria = zona_horaria.localize(fecha_datetime)
+        print(fecha_y_hora_con_zona_horaria)
         nuevoMarcacion.f_evento = fecha_y_hora_con_zona_horaria.date()
         nuevoMarcacion.h_evento = fecha_y_hora_con_zona_horaria.time()
         nuevoMarcacion.evento = dataJson["evento"]
@@ -181,8 +191,12 @@ def guardarMarcacionNoRegistrados(dataJson):
         nuevoMarcacion.apellido = "No Registrado"
         nuevoMarcacion.cargo = "No Registrado"
         fecha_datetime = datetime.strptime(dataJson["f_evento"]+' '+dataJson["h_evento"],'%Y-%m-%d %H:%M:%S')
-        zona_horaria = ZoneInfo('America/Lima')
-        fecha_y_hora_con_zona_horaria = fecha_datetime.astimezone(zona_horaria)
+        zona_horaria = pytz.timezone('America/Lima')
+        print(zona_horaria)
+        #fecha_datetime_utc = fecha_datetime.replace(tzinfo=timezone.utc) 
+        #fecha_y_hora_con_zona_horaria = fecha_datetime.astimezone(zona_horaria)
+        fecha_y_hora_con_zona_horaria = zona_horaria.localize(fecha_datetime)
+        print(fecha_y_hora_con_zona_horaria)
         nuevoMarcacion.f_evento = fecha_y_hora_con_zona_horaria.date()
         nuevoMarcacion.h_evento = fecha_y_hora_con_zona_horaria.time()
         nuevoMarcacion.evento = dataJson["evento"]
@@ -200,8 +214,12 @@ def guardarNoRegistrados(dataJson):
         nuevoNoRegistrados.id = cantidadactualRegistrada+1
         nuevoNoRegistrados.cardid = dataJson["cardid"]
         fecha_datetime = datetime.strptime(dataJson["f_evento"]+' '+dataJson["h_evento"],'%Y-%m-%d %H:%M:%S')
-        zona_horaria = ZoneInfo('America/Lima')
-        fecha_y_hora_con_zona_horaria = fecha_datetime.astimezone(zona_horaria)
+        zona_horaria = pytz.timezone('America/Lima')
+        print(zona_horaria)
+        #fecha_datetime_utc = fecha_datetime.replace(tzinfo=timezone.utc) 
+        #fecha_y_hora_con_zona_horaria = fecha_datetime.astimezone(zona_horaria)
+        fecha_y_hora_con_zona_horaria = zona_horaria.localize(fecha_datetime)
+        print(fecha_y_hora_con_zona_horaria)
         nuevoNoRegistrados.f_evento = fecha_y_hora_con_zona_horaria.date()
         nuevoNoRegistrados.h_evento = fecha_y_hora_con_zona_horaria.time()
         nuevoNoRegistrados.evento = dataJson["evento"]
