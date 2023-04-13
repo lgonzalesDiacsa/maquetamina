@@ -41,7 +41,7 @@ def autenticacion(request):
         })
     else:
         login(request, user)
-        return redirect('listar')    
+        return redirect('livedata')    
     
 @login_required(login_url = 'autenticacion')
 def signout(request):
