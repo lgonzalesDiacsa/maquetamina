@@ -51,8 +51,8 @@
         </table>
     </div>
       {% if perms.panel.change_livedata %}
-        <a href="livedata/agregar" class="btn btn-primary">Ingresar livedata</a>
-        <a href="livedata/eliminar" class="btn btn-danger">Eliminar livedata</a>
+        <a href="{% url 'livedata_agregar' %}" class="btn btn-primary">Ingresar livedata</a>
+        <a href="{% url 'livedata_eliminar' %}" class="btn btn-danger">Eliminar livedata</a>
       {% endif %}
   </div>
   {% endblock%}
