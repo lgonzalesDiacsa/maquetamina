@@ -23,7 +23,7 @@ def home_view(request: HttpRequest) -> HttpResponse:
     return render(request, 'home.html')
 
 def index_noautenticado(request):
-    
+    print("Intento ingresar a la view")
     return render(request, "index.html")
 
 def autenticacion(request):
