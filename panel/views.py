@@ -41,12 +41,12 @@ def autenticacion(request):
         })
     else:
         login(request, user)
-        return redirect('index')    
+        return redirect('listar')    
     
 @login_required(login_url = 'autenticacion')
 def signout(request):
     logout(request)
-    return redirect("listar")
+    return redirect("autenticacion")
 
 @login_required(login_url = 'autenticacion')
 def index(request):
