@@ -1,3 +1,4 @@
+from rest_framework import generics
 from rest_framework.viewsets import ModelViewSet
 from restapp.models import PostCardIDEvent
 from restapp.api.serializers import restappSerializer
@@ -25,61 +26,86 @@ import re
 
 def validar_hora(hora_str):
     """Valida el formato de la hora y lo ajusta si es necesario."""
+    print("Validar hora")
+    #print(hora_str)
     hora_patron = re.compile(r'^\d{1,2}:\d{1,2}(:\d{1,2})?$')
     if not hora_patron.match(hora_str):
         raise ValueError('La hora debe tener el formato "H:m:s" o "H:m".')
     partes = hora_str.split(':')
+    #print(partes)
     if len(partes) == 2:
         hora_str += ':00'
+    #print(hora_str)
     return hora_str
 
 def validacionDataJson(dataJson):
+    
+    dataJson = dict(dataJson)
+    
+    # Elimina la clave 'querySet' si existe
+    if 'querySet' in dataJson:
+        del dataJson['querySet']
+
+    dataJson = json.dumps(dataJson)
+    
     try:
-        objeto_json = json.loads(dataJson)
+        #print("1")
+        dataJson = json.loads(dataJson)
     except:
+        #print("2")
         return False
     
+    dataJson.pop('csrfmiddlewaretoken',None)
     #cardid = models.IntegerField(null=False)
     #f_evento = models.DateField(null=True)
     #h_evento = models.TimeField(null=True)
     #evento = models.CharField(max_length=50, null=True)
 
     campos_esperados = ['cardid', 'f_evento', 'h_evento', 'evento']
-    
-    if len(dataJson.keys()) != len(campos_esperados):
+    #print(set(dataJson.keys()))
+    #print(set(campos_esperados))
+    if set(dataJson.keys()) != set(campos_esperados):
+        #print("3")
         return False
-    
+    #print("3.1")
     for campo in campos_esperados:
         if campo not in dataJson:
-            print(f"Falta el campo {campo} en el objeto JSON")
+            #print("4")
+            #print(f"Falta el campo {campo} en el objeto JSON")
             return False
+    #print("4.1")
     #Otra opcion es implementarlo
     #if not all(campo in data for campo in campos_esperados):
     #    False
-    if dataJson['cardid']<0 or dataJson['cardid']>5000000:
+    #print(dataJson['cardid'][0])
+    if int(dataJson['cardid'][0])<0 or int(dataJson['cardid'][0])>5000000:
+        #print("5")
         return False
-
-    if dataJson['evento'] not in ["Ingreso", "Salida"]:
+    #print("5.1")
+    if dataJson['evento'][0] not in ["Ingreso", "Salida"]:
+        #print("6")
         return False  
-
+    #print("6.1")
+    #print(dataJson['f_evento'][0])
     try:
-        datetime.datetime.strptime(dataJson['f_evento'], '%Y-%m-%d')
+        datetime.strptime(dataJson['f_evento'][0], '%Y-%m-%d')
     except:
+        #print("7")
         return False
-    
+    #print("7.1")
     try:
-        datetime.datetime.strptime(dataJson['f_evento'], '%Y-%m-%d')
-    except:
-        return False
-
-    try:
-        hora_valida = validar_hora(dataJson['h_evento'])
+        hora_valida = validar_hora(dataJson['h_evento'][0])
     except ValueError as err:
-        print("Error" + err)
+        #print("8")
+        #print("Error" + err)
         return False
-    
-    dataJson['h_evento'] = hora_valida
-
+    #print(dataJson['h_evento'])
+    #print(dataJson['h_evento'][0])
+    dataJson['h_evento'][0] = hora_valida
+    #print("Se modifica hora")
+    #print(dataJson['h_evento'])
+    #print(dataJson['h_evento'][0])
+    #print(dataJson)
     return True
 
 
@@ -97,26 +123,28 @@ def actualizarLiveDataNoRegistrado(dataJson):
             usersLiveData = LiveData.objects.all()
             cantidadactualRegistrada = usersLiveData.count()
 
-            print(cantidadactualRegistrada+1)
-            print(cardid_reportado)
-            print(dataJson["f_evento"])
-            print(dataJson["h_evento"])
+            #print(cantidadactualRegistrada+1)
+            #print(cardid_reportado)
+            #print(dataJson["f_evento"])
+            #print(dataJson["h_evento"])
             nuevoLiveData = LiveData()
             nuevoLiveData.id = cantidadactualRegistrada+1
             nuevoLiveData.cardid = cardid_reportado
             nuevoLiveData.nombre = "No registrado"
             nuevoLiveData.apellido = "No registrado"
             nuevoLiveData.cargo = "No registrado"
-            fecha_datetime = datetime.strptime(dataJson["f_evento"]+' '+dataJson["h_evento"],'%Y-%m-%d %H:%M:%S')
-            print(fecha_datetime)
+            f_evento = dataJson["f_evento"]
+            h_evento = validar_hora(dataJson["h_evento"])
+            fecha_datetime = datetime.strptime(f_evento+' '+h_evento,'%Y-%m-%d %H:%M:%S')
+            #print(fecha_datetime)
             #zona_horaria = timezone.get_current_timezone()
             #zona_horaria = ZoneInfo('America/Lima')
             zona_horaria = pytz.timezone('America/Lima')
-            print(zona_horaria)
+            #print(zona_horaria)
             #fecha_datetime_utc = fecha_datetime.replace(tzinfo=timezone.utc) 
             #fecha_y_hora_con_zona_horaria = fecha_datetime.astimezone(zona_horaria)
             fecha_y_hora_con_zona_horaria = zona_horaria.localize(fecha_datetime)
-            print(fecha_y_hora_con_zona_horaria)
+            #print(fecha_y_hora_con_zona_horaria)
             nuevoLiveData.f_ingreso = fecha_y_hora_con_zona_horaria.date()
             nuevoLiveData.h_ingreso = fecha_y_hora_con_zona_horaria.time()
             nuevoLiveData.save()
@@ -162,29 +190,31 @@ def actualizarLiveData(dataJson):
             usersLiveData = LiveData.objects.all()
             cantidadactualRegistrada = usersLiveData.count()
 
-            print(cantidadactualRegistrada+1)
-            print(datosUserLiveData.cardid)
-            print(datosUserLiveData.nombre)
-            print(datosUserLiveData.apellido)
-            print(dataJson["f_evento"])
-            print(dataJson["h_evento"])
+            #print(cantidadactualRegistrada+1)
+            #print(datosUserLiveData.cardid)
+            ##print(datosUserLiveData.nombre)
+            #print(datosUserLiveData.apellido)
+            #print(dataJson["f_evento"])
+            #print(dataJson["h_evento"])
             nuevoLiveData = LiveData()
-            print("1")
+            #print("1")
             nuevoLiveData.id = cantidadactualRegistrada+1
-            print("1")
+            #print("1")
             nuevoLiveData.cardid = datosUserLiveData.cardid
             nuevoLiveData.nombre = datosUserLiveData.nombre
             nuevoLiveData.apellido = datosUserLiveData.apellido
             nuevoLiveData.cargo = datosUserLiveData.cargo
-            fecha_datetime = datetime.strptime(dataJson["f_evento"]+' '+dataJson["h_evento"],'%Y-%m-%d %H:%M:%S')
-            print(fecha_datetime)
+            f_evento = dataJson["f_evento"]
+            h_evento = validar_hora(dataJson["h_evento"])
+            fecha_datetime = datetime.strptime(f_evento+' '+h_evento,'%Y-%m-%d %H:%M:%S')
+            #print(fecha_datetime)
             #zona_horaria = timezone.get_current_timezone()
             zona_horaria = pytz.timezone('America/Lima')
-            print(zona_horaria)
+            #print(zona_horaria)
             #fecha_datetime_utc = fecha_datetime.replace(tzinfo=timezone.utc) 
             #fecha_y_hora_con_zona_horaria = fecha_datetime.astimezone(zona_horaria)
             fecha_y_hora_con_zona_horaria = zona_horaria.localize(fecha_datetime)
-            print(fecha_y_hora_con_zona_horaria)
+            #print(fecha_y_hora_con_zona_horaria)
             nuevoLiveData.f_ingreso = fecha_y_hora_con_zona_horaria.date()
             nuevoLiveData.h_ingreso = fecha_y_hora_con_zona_horaria.time()
             nuevoLiveData.save()
@@ -228,7 +258,9 @@ def guardarMarcacionRegistrados(dataJson):
         nuevoMarcacion.nombre = datosUserHistorial.nombre
         nuevoMarcacion.apellido = datosUserHistorial.apellido
         nuevoMarcacion.cargo = datosUserHistorial.cargo
-        fecha_datetime = datetime.strptime(dataJson["f_evento"]+' '+dataJson["h_evento"],'%Y-%m-%d %H:%M:%S')
+        f_evento = dataJson["f_evento"]
+        h_evento = validar_hora(dataJson["h_evento"])
+        fecha_datetime = datetime.strptime(f_evento+' '+h_evento,'%Y-%m-%d %H:%M:%S')
         zona_horaria = pytz.timezone('America/Lima')
         print(zona_horaria)
         #fecha_datetime_utc = fecha_datetime.replace(tzinfo=timezone.utc) 
@@ -254,7 +286,9 @@ def guardarMarcacionNoRegistrados(dataJson):
         nuevoMarcacion.nombre = "No Registrado"
         nuevoMarcacion.apellido = "No Registrado"
         nuevoMarcacion.cargo = "No Registrado"
-        fecha_datetime = datetime.strptime(dataJson["f_evento"]+' '+dataJson["h_evento"],'%Y-%m-%d %H:%M:%S')
+        f_evento = dataJson["f_evento"]
+        h_evento = validar_hora(dataJson["h_evento"])
+        fecha_datetime = datetime.strptime(f_evento+' '+h_evento,'%Y-%m-%d %H:%M:%S')
         zona_horaria = pytz.timezone('America/Lima')
         print(zona_horaria)
         #fecha_datetime_utc = fecha_datetime.replace(tzinfo=timezone.utc) 
@@ -276,9 +310,11 @@ def guardarNoRegistrados(dataJson):
         nuevoNoRegistrados = NoRegistrados()
         nuevoNoRegistrados.id = cantidadactualRegistrada+1
         nuevoNoRegistrados.cardid = dataJson["cardid"]
-        fecha_datetime = datetime.strptime(dataJson["f_evento"]+' '+dataJson["h_evento"],'%Y-%m-%d %H:%M:%S')
+        f_evento = dataJson["f_evento"]
+        h_evento = validar_hora(dataJson["h_evento"])
+        fecha_datetime = datetime.strptime(f_evento+' '+h_evento,'%Y-%m-%d %H:%M:%S')
         zona_horaria = pytz.timezone('America/Lima')
-        print(zona_horaria)
+        #print(zona_horaria)
         #fecha_datetime_utc = fecha_datetime.replace(tzinfo=timezone.utc) 
         #fecha_y_hora_con_zona_horaria = fecha_datetime.astimezone(zona_horaria)
         fecha_y_hora_con_zona_horaria = zona_horaria.localize(fecha_datetime)
@@ -300,15 +336,17 @@ class restappViewSet(ModelViewSet):
 
         #Validacion de datos
         try:
-            print('DATA QUE LLEGA A LA VISTA CREATE POR DEFECTO')
-            print(data)
+            #print('DATA QUE LLEGA A LA VISTA CREATE POR DEFECTO')
+            #print(data)
             if validacionDataJson(data) == False:
                 return JsonResponse({'error': 'Verificar campos'}, status=400)
         except:
             return JsonResponse({'error': 'Error inesperado en campos'}, status=400)
         print('VALIDACION OK')
-        print('DATA A USAR LUEGO VALIDACION')
-        print(data)
+        #print('DATA A USAR LUEGO VALIDACION')
+        #print(data['h_evento'])
+        #print(data['h_evento'][0])
+        #print(data)
         try:
             cardid_reportado = data["cardid"]
             user = PersonalRegistrado.objects.get(cardid=cardid_reportado)
