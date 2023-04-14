@@ -104,12 +104,19 @@ def actualizarLiveData(dataJson):
             print(dataJson["f_evento"])
             print(dataJson["h_evento"])
             nuevoLiveData = LiveData()
+            print("1")
             nuevoLiveData.id = cantidadactualRegistrada+1
+            print("2")
             nuevoLiveData.cardid = datosUserLiveData.cardid
+            print("3")
             nuevoLiveData.nombre = datosUserLiveData.nombre
+            print("4")
             nuevoLiveData.apellido = datosUserLiveData.apellido
+            print("5")
             nuevoLiveData.cargo = datosUserLiveData.cargo
+            print("6")
             fecha_datetime = datetime.strptime(dataJson["f_evento"]+' '+dataJson["h_evento"],'%Y-%m-%d %H:%M:%S')
+            print("7")
             print(fecha_datetime)
             #zona_horaria = timezone.get_current_timezone()
             #zona_horaria = ZoneInfo('America/Lima')
