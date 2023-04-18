@@ -55,24 +55,24 @@ def validacionDataJson(dataJson):
         #print("2")
         return False
     
-    dataJson.pop('csrfmiddlewaretoken',None)
+    #dataJson.pop('csrfmiddlewaretoken',None)
     #cardid = models.IntegerField(null=False)
     #f_evento = models.DateField(null=True)
     #h_evento = models.TimeField(null=True)
     #evento = models.CharField(max_length=50, null=True)
 
-    campos_esperados = ['cardid', 'f_evento', 'h_evento', 'evento']
+    #campos_esperados = ['cardid', 'f_evento', 'h_evento', 'evento']
     #print(set(dataJson.keys()))
     #print(set(campos_esperados))
-    if set(dataJson.keys()) != set(campos_esperados):
+    #if set(dataJson.keys()) != set(campos_esperados):
         #print("3")
-        return False
+        #return False
     #print("3.1")
-    for campo in campos_esperados:
-        if campo not in dataJson:
+    #for campo in campos_esperados:
+        #if campo not in dataJson:
             #print("4")
             #print(f"Falta el campo {campo} en el objeto JSON")
-            return False
+            #return False
     #print("4.1")
     #Otra opcion es implementarlo
     #if not all(campo in data for campo in campos_esperados):
